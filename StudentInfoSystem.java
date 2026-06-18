@@ -2,108 +2,84 @@
 import java.util.HashMap;
 import java.util.Scanner;
 
-
-class StudentRecord {
-    int marks;
-    String grade;
-
-    public StudentRecord(int marks) {
-        this.marks = marks;
-        this.grade = calculateGrade(marks);
-    }
-
-    private String calculateGrade(int marks) {
-        if (marks >= 90) return "A";
-        else if (marks >= 80) return "B";
-        else if (marks >= 70) return "C";
-        else if (marks >= 60) return "D";
-        else return "F";
-    }
-}
-
-
-class  Student {
-
+class Student {
+    
+    HashMap<String, Integer> marks = new HashMap<>();
     int maxmarks = 0;
-    int avgmarks=0;
-    int pass =0;
-    int fail =0;
-    HashMap<String , StudentRecord> studentInfo = new HashMap<>();
-
-    public HashMap<String, StudentRecord> AddStu(String name, int marks) {
-        studentInfo.put(name, new StudentRecord(marks));
-        return studentInfo;
+    int totalmarks = 0;
+    int pass = 0;
+    int fail = 0;
+    String topper = "";
+    
+    void addStudent(String name, int m) {
+        marks.put(name, m);
     }
-
-     public void getStudentInfo(){
-         for ( String key: studentInfo.keySet()) {
-
-            if ( maxmarks < studentInfo.get(key).marks) {
-                maxmarks = studentInfo.get(key).marks;
+    
+    String getGrade(int m) {
+        if (m >= 90) return "A";
+        if (m >= 80) return "B";
+        if (m >= 70) return "C";
+        if (m >= 60) return "D";
+        return "F";
+    }
+    
+    void showStudents() {
+        System.out.println("Name\tMarks\tGrade");
+        for (String name : marks.keySet()) {
+            int m = marks.get(name);
+            String grade = getGrade(m);
+            System.out.println(name + "\t" + m + "\t" + grade);
+            
+            if (m > maxmarks) {
+                maxmarks = m;
+                topper = name;
             }
-
-            avgmarks += studentInfo.get(key).marks;
-           
-            if ( studentInfo.get(key).marks >= 40) {
-                pass++;
+            
+            totalmarks = totalmarks + m;
+            
+            if (m >= 40) {
+                pass = pass + 1;
             } else {
-                fail++;
+                fail = fail + 1;
             }
-
-          int value = studentInfo.get(key).marks;
-          String grade = studentInfo.get(key).grade;
-          System.out.println(key + "\t" + value + "\t" + grade);
-         }
-     }
-
-
+        }
+    }
 }
 
 public class StudentInfoSystem {
 
-    public static void main (String args[]){
-
-    
-
-        Student student = new Student();
-
-        Scanner sc = new Scanner(System.in);
-
-        System.out.println("Welcome to the Student Information System");
-
-        System.out.println("Please enter the details of the student: ");
-
-        System.out.println("Enter number of students: ");
-        int n  = sc.nextInt();
-        sc.nextLine();
-
-        for (int i = 0; i < n; i++) {
-
-        System.out.println("Enter the name of the student: ");
-        String name = sc.nextLine();
-        System.out.println("Enter the marks of the student: ");
-        int marks = sc.nextInt();
-        sc.nextLine(); 
-        student.AddStu(name, marks);
-        }  
-
-       
-     System.out.println("-----------Student Report------- ");
-     System.out.println("Name\tMarks\tGrade");
-     student.getStudentInfo();
-
-     System.out.println("The maximum marks scored by a student is: " +  student.maxmarks);
-     System.out.println("The number of students who passed is: " +  student.pass);
-        System.out.println("The number of students who failed is: " +  student.fail);
-     System.out.println("The average marks scored by the students is: " +  (student.avgmarks/n));
-
-     System.out.println("Topper name is:"+ student.studentInfo.entrySet().stream()
-        .max((entry1, entry2) -> Integer.compare(entry1.getValue().marks, entry2.getValue().marks))
-        .get()
-        .getKey());
-     System.out.println("Thank you for using the Student Information System!");
-
-    sc.close();
+    public static void main(String args[]) {
         
+        Student s = new Student();
+        Scanner sc = new Scanner(System.in);
+        
+        System.out.println("Welcome to Student Grade System");
+        System.out.println("Enter number of students: ");
+        int n = sc.nextInt();
+        sc.nextLine();
+        
+        for (int i = 0; i < n; i++) {
+            System.out.println("Enter student name: ");
+            String name = sc.nextLine();
+            
+            System.out.println("Enter marks: ");
+            int m = sc.nextInt();
+            sc.nextLine();
+            
+            s.addStudent(name, m);
+        }
+        
+        System.out.println("\n------- REPORT -------");
+        s.showStudents();
+        
+        int avg = s.totalmarks / n;
+        
+        System.out.println("\nMax marks: " + s.maxmarks);
+        System.out.println("Average marks: " + avg);
+        System.out.println("Passed: " + s.pass);
+        System.out.println("Failed: " + s.fail);
+        System.out.println("Topper: " + s.topper);
+        
+        sc.close();
     }
 }
